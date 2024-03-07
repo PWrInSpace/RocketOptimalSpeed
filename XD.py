@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import math
 
 ##Definicja danych modelu
@@ -16,10 +17,22 @@ Cx=0.3 #współczynnik oporu aerodynamicznego rakiety
 k=1.4 #współczynnik adiabatyczny
 
 df = pd.read_csv('SilnikCSV.csv')
-
 for v in range(60,550,5):
     df[v] =(df['Siła ciążenia (Fg [N])']*(10000/v)+Cx*v*df['Gęstość powietrza (ρ [kg/m^3])']*math.pi*d**2*10000/8)
 
-df['min'] = df.iloc[:, 5:df.shape[1]].min(axis=1)
-print(df.iloc[0])
+df['min'] = df.iloc[:, 5:].min(axis=1)
+df['idx'] = np.argmin(df.iloc[:, 5:], axis=1) +1
+print(df.head())
 
+
+idxs = df['idx'].to_list()
+print(idxs)
+vopt=[]
+for i in idxs:
+    vopt.append(i*5 + 55)
+
+print(vopt)
+h=[]
+for i in range(0,10001,10):
+    h.append(i)
+print(h)
