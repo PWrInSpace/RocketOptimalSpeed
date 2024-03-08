@@ -1,8 +1,7 @@
 # RocketOptimalSpeed
 Program that finds optimal speed for certain height and graph of drag coefficient.
 
+Currently uses following reaserch done by Manfred Gawlas for Cd Plot https://github.com/pingponghero12/CdStudyForR5
+
 ## TO DO
-1. Rewrite stuff from excel or implement dynamic Mach to excel - Mateusz Pilecki [Work in progres]
-2. Implement dynamic Cd using plot of CdFun(Mach) - Manfred [DONE]
-3. Find resonable Cd plot - Ktoś [Work in progress]
-4. Final assembly of program and output plots
+1. Find out why function is SQUARE and fix it

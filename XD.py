@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
 import math
+import matplotlib.pyplot as plt
+from cfdToFunction import CdFun
+
+
 
 ##Definicja danych modelu
 T0=308 #temperatura dla h=0 [K]
@@ -17,22 +21,33 @@ Cx=0.3 #współczynnik oporu aerodynamicznego rakiety
 k=1.4 #współczynnik adiabatyczny
 
 df = pd.read_csv('SilnikCSV.csv')
+
+
+# Make CdFun gets good temperature value as input
 for v in range(60,550,5):
-    df[v] =(df['Siła ciążenia (Fg [N])']*(10000/v)+Cx*v*df['Gęstość powietrza (ρ [kg/m^3])']*math.pi*d**2*10000/8)
+    df[v] =(df['Siła ciążenia (Fg [N])']*(10000/v)+CdFun(df["Temperatura (T [K])"], v)*v*df['Gęstość powietrza (ρ [kg/m^3])']*math.pi*d**2*10000/8)
 
 df['min'] = df.iloc[:, 5:].min(axis=1)
 df['idx'] = np.argmin(df.iloc[:, 5:], axis=1) +1
 print(df.head())
 
-
 idxs = df['idx'].to_list()
-print(idxs)
+
 vopt=[]
 for i in idxs:
     vopt.append(i*5 + 55)
 
-print(vopt)
+vopt.pop()
+
 h=[]
-for i in range(0,10001,10):
+for i in range(0,10000,10):
     h.append(i)
-print(h)
+
+plt.plot(h, vopt)
+plt.xlabel('h')
+plt.ylabel('vopt')
+plt.title('Optimal Speed vs Altitude')
+plt.show()
+
+
+
