@@ -23,31 +23,38 @@ k=1.4 #współczynnik adiabatyczny
 df = pd.read_csv('SilnikCSV.csv')
 
 
-# Make CdFun gets good temperature value as input
-for v in range(60,550,5):
-    df[v] =(df['Siła ciążenia (Fg [N])']*(10000/v)+CdFun(df["Temperatura (T [K])"], v)*v*df['Gęstość powietrza (ρ [kg/m^3])']*math.pi*d**2*10000/8)
+def calculate_optimal_speed(df):
+    for v in range(60,550,5):
+        df[v] =(df['Siła ciążenia (Fg [N])']*(10000/v)+CdFun(df["Temperatura (T [K])"], v)*v*df['Gęstość powietrza (ρ [kg/m^3])']*math.pi*d**2*10000/8)
+    df['min'] = df.iloc[:, 5:].min(axis=1)
+    df['idx'] = np.argmin(df.iloc[:, 5:], axis=1) +1
+    return df
 
-df['min'] = df.iloc[:, 5:].min(axis=1)
-df['idx'] = np.argmin(df.iloc[:, 5:], axis=1) +1
-print(df.head())
+def get_optimal_speeds(df):
+    idxs = df['idx'].to_list()
+    vopt=[]
+    for i in idxs:
+        vopt.append(i*5 + 55)
+    vopt.pop()  # For some reason the last value is 0, so we delete it
+    return vopt
 
-idxs = df['idx'].to_list()
+def get_altitudes():
+    h=[]
+    for i in range(0,10000,10):
+        h.append(i)
+    return h
 
-vopt=[]
-for i in idxs:
-    vopt.append(i*5 + 55)
+def plot_optimal_speed_vs_altitude(h, vopt):
+    plt.plot(h, vopt)
+    plt.xlabel('h')
+    plt.ylabel('vopt')
+    plt.title('Optimal Speed vs Altitude')
+    plt.show()
 
-vopt.pop()
-
-h=[]
-for i in range(0,10000,10):
-    h.append(i)
-
-plt.plot(h, vopt)
-plt.xlabel('h')
-plt.ylabel('vopt')
-plt.title('Optimal Speed vs Altitude')
-plt.show()
-
+# Function calls
+df = calculate_optimal_speed(df)
+vopt = get_optimal_speeds(df)
+h = get_altitudes()
+plot_optimal_speed_vs_altitude(h, vopt)
 
 
